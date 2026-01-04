@@ -32,9 +32,11 @@ export interface SharedData {
 
 export interface User {
     id: number;
+    public_handle: string;
     display_name?: string;
     bio?: string;
     email: string;
+    avatar_url?: string; // fallback
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;

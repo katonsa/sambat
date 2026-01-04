@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -16,4 +17,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
-require __DIR__.'/settings.php';
+Route::middleware(['auth'])->group(function () {
+    Route::get('users/{user:public_handle}', [UserController::class, 'show'])->name('users.show');
+});
+
+require __DIR__ . '/settings.php';
