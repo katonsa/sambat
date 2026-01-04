@@ -19,7 +19,7 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         Validator::make($input, [
-            'display_name' => ['string', 'max:255'],
+            'display_name' => ['nullable', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -32,7 +32,7 @@ class CreateNewUser implements CreatesNewUsers
 
         return User::create([
             // Auto generate public_handle
-            'public_handle' => 'user_' . bin2hex(random_bytes(5)),
+            'public_handle' => 'user' . bin2hex(random_bytes(5)),
             'display_name' => $input['display_name'],
             'email' => $input['email'],
             'password' => $input['password'],
