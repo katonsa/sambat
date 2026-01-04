@@ -10,6 +10,7 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from "@/components/ui/textarea"
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
@@ -51,21 +52,38 @@ export default function Profile({
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="display_name">Display Name</Label>
 
                                     <Input
-                                        id="name"
+                                        id="display_name"
                                         className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
-                                        name="name"
-                                        required
+                                        defaultValue={auth.user.display_name}
+                                        name="display_name"
                                         autoComplete="name"
-                                        placeholder="Full name"
+                                        placeholder="Display name (maximum 255 characters)"
+                                        maxLength={255}
                                     />
 
                                     <InputError
                                         className="mt-2"
-                                        message={errors.name}
+                                        message={errors.display_name}
+                                    />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="bio">Bio</Label>
+
+                                    <Textarea
+                                        id="bio" 
+                                        className="mt-1 block w-full" 
+                                        defaultValue={auth.user.bio} 
+                                        name="bio" 
+                                        autoComplete="off"
+                                        placeholder="Tell us about yourself (maximum 255 characters)" maxLength={255} />
+
+                                    <InputError
+                                        className="mt-2"
+                                        message={errors.bio}
                                     />
                                 </div>
 

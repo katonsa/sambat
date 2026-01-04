@@ -27,7 +27,7 @@ export default function Register() {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="display_name">Name</Label>
+                                <Label htmlFor="display_name">Display Name <small>&#40;optional&#41;</small></Label>
                                 <Input
                                     id="display_name"
                                     type="text"
@@ -35,7 +35,7 @@ export default function Register() {
                                     tabIndex={1}
                                     autoComplete="name"
                                     name="display_name"
-                                    placeholder="Display Name (Optional)"
+                                    placeholder="John"
                                 />
                                 <InputError
                                     message={errors.display_name}
