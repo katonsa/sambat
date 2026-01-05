@@ -50,4 +50,34 @@ class Post extends Model
             $post->uuid = (string) Str::uuid();
         });
     }
+
+    /**
+     * Get the post's author.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<User, Post>
+     */
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Get the post's replies.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Post, Post>
+     */
+    public function replies()
+    {
+        return $this->hasMany(Post::class, 'parent_post_id');
+    }
+
+    /**
+     * Get the post's parent.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<Post, Post>
+     */
+    public function parent()
+    {
+        return $this->belongsTo(Post::class, 'parent_post_id');
+    }
 }
