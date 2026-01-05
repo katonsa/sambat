@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\FollowController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\FollowController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -19,9 +20,10 @@ Route::get('/', function () {
 // });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('feed', function () {
-        return Inertia::render('feed');
-    })->name('feed');
+    Route::get('feed', fn () => Inertia::render('feed'))->name('feed');
+
+    Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+    Route::post('posts', [PostController::class, 'store'])->name('posts.store');
 
     Route::get('users/{user:public_handle}', [UserController::class, 'show'])->name('users.show');
 
@@ -35,4 +37,4 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';
