@@ -52,4 +52,38 @@ class User extends Authenticatable implements MustVerifyEmail
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    public function followers() {
+        return $this->belongsToMany(User::class, 'follows', 'followed_id', 'follower_id')->withTimestamps();
+    }
+
+    /**
+     * User whom this user follows.
+     */
+    public function following() {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'followed_id')->withTimestamps();
+    }
+
+    /**
+     * Follow a user
+     */
+    public function follow(User $user) {
+        return $this->following()->syncWithoutDetaching($user->id);
+    }
+
+    /**
+     * Unfollow a user.
+     */
+    public function unfollow(User $user)
+    {
+        return $this->following()->detach($user->id);
+    }
+
+    /**
+     * Check if this user is following another user.
+     */
+    public function isFollowing(User $user)
+    {
+        return $this->following()->where('followed_id', $user->id)->exists();
+    }
 }
