@@ -14,15 +14,15 @@ class FollowController extends Controller
      */
     public function store(Request $request, User $user): RedirectResponse
     {
-        if ($request->user()->id === $user->id) {
+        if (auth()->user()->id === $user->id) {
             return back()->with('error', 'You cannot follow yourself.');
         }
 
-        if ($request->user()->isFollowing($user)) {
+        if (auth()->user()->isFollowing($user)) {
             return back()->with('info', "You are already following {$user->public_handle}.");
         }
 
-        $request->user()->follow($user);
+        auth()->user()->follow($user);
 
         return back()->with('success', "You are now following {$user->public_handle}.");
     }
@@ -32,11 +32,11 @@ class FollowController extends Controller
      */
     public function destroy(Request $request, User $user): RedirectResponse
     {
-        if (!$request->user()->isFollowing($user)) {
+        if (!auth()->user()->isFollowing($user)) {
             return back()->with('info', "You are not following {$user->display_name}.");
         }
 
-        $request->user()->unfollow($user);
+        auth()->user()->unfollow($user);
 
         return back()->with('success', "You have unfollowed {$user->display_name}.");
     }

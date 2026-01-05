@@ -25,8 +25,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('users/{user:public_handle}', [UserController::class, 'show'])->name('users.show');
 
-    Route::post('users/{user:public_handle}', [FollowController::class, 'store'])->name('users.follow');
-    Route::delete('users/{user:public_handle}', [FollowController::class, 'destroy'])->name('users.unfollow');
+    Route::post('users/{user:public_handle}/follow', [FollowController::class, 'store'])->name('users.follow');
+    Route::delete('users/{user:public_handle}/unfollow', [FollowController::class, 'destroy'])->name('users.unfollow');
 
     Route::get('me', function () {
         // Redirect to users/{current_user_public_handle}
