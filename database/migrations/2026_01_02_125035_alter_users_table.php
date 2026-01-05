@@ -33,16 +33,23 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('display_name')->nullable(false)->change();
+            $table->dropUnique(['public_handle']); // Drop the unique constraint
+            $table->dropColumn(['bio', 'avatar_url', 'is_suspended']);
         });
 
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn('display_name', 'name');
         });
 
+        // Update null values to a default value before changing to non-nullable / backfill
+        DB::table('users')->whereNull('name')->orderBy('id')
+            ->chunkById(1000, function ($rows) {
+                $ids = collect($rows)->pluck('id')->all();
+                DB::table('users')->whereIn('id', $ids)->update(['name' => 'User']);
+            });
+
         Schema::table('users', function (Blueprint $table) {
-            $table->dropUnique(['public_handle']); // Drop the unique constraint
-            $table->dropColumn(['bio', 'avatar_url', 'is_suspended']);
+            $table->string('name')->nullable(false)->change();
         });
     }
 };
