@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem, User as UserType } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { CalendarDays, Pencil } from 'lucide-react';
 import { edit as editProfile } from '@/routes/profile'
 
 interface UserShowProps {
-    profileUser: UserType & { is_self: boolean };
-    tab: 'posts' | 'likes';
+    profileUser: UserType & { is_followed: boolean; is_self: boolean };
+    tab: 'posts' | 'likes'; // tabs on profile page
 }
 
 export default function UserShow({ profileUser: initialUser, tab }: UserShowProps) {
@@ -26,9 +26,27 @@ export default function UserShow({ profileUser: initialUser, tab }: UserShowProp
         },
         {
             title: `${user.display_name || user.public_handle}`,
-            href: `/users/${user.id}`,
+            href: `/users/${user.public_handle}`,
         },
     ];
+
+    // Profile Follow/Unfollow
+    const toggleProfileFollow = () => {
+        const wasFollowed = user.is_followed;
+        setUser((prev) => ({ ...prev, is_followed: !wasFollowed }));
+
+        if (wasFollowed) {
+            router.delete(`/users/${user.public_handle}/unfollow`, {
+                preserveScroll: true,
+                onError: () => setUser(initialUser),
+            });
+        } else {
+            router.post(`/users/${user.public_handle}/follow`, {}, {
+                preserveScroll: true,
+                onError: () => setUser(initialUser),
+            });
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -52,6 +70,14 @@ export default function UserShow({ profileUser: initialUser, tab }: UserShowProp
                                     </div>
                                 </div>
                             </div>
+                            {!user.is_self && (
+                                <Button
+                                    onClick={toggleProfileFollow}
+                                    variant={user.is_followed ? "secondary" : "default"}
+                                >
+                                    {user.is_followed ? 'Unfollow' : 'Follow'}
+                                </Button>
+                            )}
                             {user.is_self && (
                                 <Button asChild variant="outline" size="sm" className="cursor-pointer gap-2">
                                     <Link href={editProfile.url()}>
@@ -66,6 +92,10 @@ export default function UserShow({ profileUser: initialUser, tab }: UserShowProp
                                 <p className="whitespace-pre-wrap">{user.bio}</p>
                             </div>
                         )}
+                        <div className="mt-4 flex gap-4 text-sm">
+                            <span className="font-semibold text-foreground">{user.following_count ?? 0} <span className="text-muted-foreground font-normal">Following</span></span>
+                            <span className="font-semibold text-foreground">{user.followers_count ?? 0} <span className="text-muted-foreground font-normal">Followers</span></span>
+                        </div>
                     </div>
                 </div>
             </div>
