@@ -43,6 +43,16 @@ class Post extends Model
     {
         return [];
     }
+    
+    /**
+     * Get route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
 
     protected static function booted(): void
     {

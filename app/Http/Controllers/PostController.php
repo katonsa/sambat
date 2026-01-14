@@ -26,7 +26,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('posts/create');
     }
 
     /**
@@ -51,7 +51,11 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        $post->load('author');
+        
+        return Inertia::render('posts/show', [
+            'post' => $post,
+        ]);
     }
 
     /**
@@ -65,9 +69,16 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(StorePostRequest $request, Post $post)
     {
-        //
+        if ($post->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validated = $request->validated();
+        $post->update($validated);
+
+        return redirect()->back();
     }
 
     /**
@@ -75,6 +86,13 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        // Check if the authenticated user is the author of the post
+        if ($post->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $post->delete();
+
+        return redirect()->route('posts.index')->with('success', 'Post deleted successfully');
     }
 }

@@ -24,7 +24,7 @@ class StorePostRequest extends FormRequest
     {
         return [
             'content' => ['required', 'string', 'max:280'],
-            'visibility' => ['required', Rule::in(['PUBLIC', 'FOLLOWERS', 'PRIVATE'])],
+            'visibility' => ['required', Rule::in(['PUBLIC', 'PRIVATE'])],
             'parent_post_id' => ['nullable', 'exists:posts,id'],
         ];
     }

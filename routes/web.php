@@ -20,10 +20,13 @@ Route::get('/', function () {
 // });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('feed', fn () => Inertia::render('feed'))->name('feed');
-
+    Route::get('feed', [PostController::class, 'index'])->name('feed');
     Route::get('posts', [PostController::class, 'index'])->name('posts.index');
+    Route::get('posts/create', [PostController::class, 'create'])->name('posts.create');
     Route::post('posts', [PostController::class, 'store'])->name('posts.store');
+    Route::get('posts/{post}', [PostController::class, 'show'])->name('posts.show');
+    Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
+    Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
     Route::get('users/{user:public_handle}', [UserController::class, 'show'])->name('users.show');
 
