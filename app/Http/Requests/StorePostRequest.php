@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePostRequest extends FormRequest
 {
@@ -23,6 +24,8 @@ class StorePostRequest extends FormRequest
     {
         return [
             'content' => ['required', 'string', 'max:280'],
+            'visibility' => ['required', Rule::in(['PUBLIC', 'FOLLOWERS', 'PRIVATE'])],
+            'parent_post_id' => ['nullable', 'exists:posts,id'],
         ];
     }
 }

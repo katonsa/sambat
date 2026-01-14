@@ -11,10 +11,12 @@ class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
+     * @return \Inertia\Response
      */
-    public function index(): \Inertia\Response
+    public function index()
     {
-        $posts = Post::where('visibility', 'PUBLIC')->latest()->cursorPaginate(10);
+        $posts = Post::with('author')->where('visibility', 'PUBLIC')->latest()->cursorPaginate(10);
 
         return Inertia::render('posts/index', ['posts' => $posts]);
     }
@@ -32,7 +34,16 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        dd($request->validated());
+        $validated = $request->validated();
+
+        if (isset($validated['parent_post_id'])) {
+            $validated['is_reply'] = true;
+        }
+
+        // Create post
+        $request->user()->posts()->create($validated);
+
+        return redirect()->route('posts.index')->with('success', 'Post created successfully');
     }
 
     /**
